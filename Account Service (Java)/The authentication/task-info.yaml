@@ -532,22 +532,23 @@ files:
 - name: src/account/businesslayer/security/SecurityConfig.java
   visible: true
   learner_created: true
+- name: src/account/businesslayer/security/UserAdapter.java
+  visible: true
+  learner_created: true
+- name: src/account/businesslayer/security/UserAdapterService.java
+  visible: true
+  learner_created: true
+- name: src/account/businesslayer/exceptions/UserExistsException.java
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/16602#comment
 status: Failed
 feedback:
   message: |-
-    Wrong answer in test #2
+    Wrong answer in test #18
 
-    POST /api/auth/signup should respond with status code 400, responded: 200
-    User must be unique!
-    Response body:
-    {
-      &quot;id&quot; : 0,
-      &quot;name&quot; : &quot;John&quot;,
-      &quot;lastname&quot; : &quot;Doe&quot;,
-      &quot;email&quot; : &quot;JohnDoe@acme.com&quot;
-    }
-    Request body:
-    {&quot;name&quot;:&quot;John&quot;,&quot;lastname&quot;:&quot;Doe&quot;,&quot;email&quot;:&quot;JohnDoe@acme.com&quot;,&quot;password&quot;:&quot;secret&quot;}
-  time: "Wed, 16 Aug 2023 17:27:58 UTC"
+    Get /api/empl/payment should respond with status code 200, responded: 401
+    User must login!
+    Authentication with johndoe@acme.com / secret
+  time: "Thu, 17 Aug 2023 17:24:16 UTC"
 record: 1

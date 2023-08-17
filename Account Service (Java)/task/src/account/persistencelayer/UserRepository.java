@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends CrudRepository<User, Long> {
 
     User findByEmail(String email);
-    boolean existsByEmail(String email);
+    boolean existsByEmailIgnoreCase(String email);
 }
