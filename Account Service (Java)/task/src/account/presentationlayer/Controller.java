@@ -1,14 +1,13 @@
 package account.presentationlayer;
 
 
-import account.businesslayer.user.SignupDTO;
 import account.businesslayer.user.User;
 import account.businesslayer.user.UserMapper;
-import account.persistencelayer.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+
 
 
 @RestController
@@ -22,11 +21,9 @@ public class Controller {
     }
 
     @PostMapping("/api/auth/signup")
-    public SignupDTO signup(@RequestBody User user) {
-        if (user.isCorrect()) {
-            return userMapper.toSignupDTO(user);
-        }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> signup(@Valid @RequestBody User user) {
+        return new ResponseEntity<>(userMapper.toSignupDTO(user), HttpStatus.OK);
+
     }
 
     @GetMapping("/api/empl/payment/")

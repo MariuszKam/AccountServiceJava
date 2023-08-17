@@ -536,10 +536,18 @@ feedback_link: https://hyperskill.org/learn/step/16602#comment
 status: Failed
 feedback:
   message: |-
-    Wrong answer in test #1
+    Wrong answer in test #2
 
-    Response must contain user ID
-    Received response:
-    {&quot;timestamp&quot;:&quot;2023-08-16T16:19:38.491+00:00&quot;,&quot;status&quot;:403,&quot;error&quot;:&quot;Forbidden&quot;,&quot;message&quot;:&quot;Forbidden&quot;,&quot;path&quot;:&quot;/api/auth/signup&quot;}
-  time: "Wed, 16 Aug 2023 16:19:39 UTC"
+    POST /api/auth/signup should respond with status code 400, responded: 200
+    User must be unique!
+    Response body:
+    {
+      &quot;id&quot; : 0,
+      &quot;name&quot; : &quot;John&quot;,
+      &quot;lastname&quot; : &quot;Doe&quot;,
+      &quot;email&quot; : &quot;JohnDoe@acme.com&quot;
+    }
+    Request body:
+    {&quot;name&quot;:&quot;John&quot;,&quot;lastname&quot;:&quot;Doe&quot;,&quot;email&quot;:&quot;JohnDoe@acme.com&quot;,&quot;password&quot;:&quot;secret&quot;}
+  time: "Wed, 16 Aug 2023 17:27:58 UTC"
 record: 1

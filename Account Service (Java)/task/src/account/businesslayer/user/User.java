@@ -2,6 +2,8 @@ package account.businesslayer.user;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 
@@ -16,22 +18,15 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private final long id;
+    @NotBlank
     private final String name;
+    @NotBlank
     private final String lastname;
+    @NotBlank
+    @Email(regexp = "^(.+)@acme.com$")
     private final String email;
+    @NotBlank
     private String password;
 
-
-    public boolean isEmailCorrect() {
-        assert email != null;
-        return  email.matches("^[a-zA-Z]+@acme.com$");
-    }
-    public boolean isCorrect() {
-        return isEmailCorrect() &&
-                name != null && !name.isEmpty() &&
-                lastname != null && !lastname.isEmpty() &&
-                email != null && !email.isEmpty() &&
-                password != null && !password.isEmpty();
-    }
 
 }
