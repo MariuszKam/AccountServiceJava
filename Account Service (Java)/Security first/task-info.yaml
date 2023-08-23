@@ -223,87 +223,6 @@ files:
 
     }
   learner_created: false
-- name: src/account/presentationlayer/SecurityConfig.java
-  visible: true
-  text: |
-    package account.presentationlayer;
-
-    import org.springframework.beans.factory.annotation.Autowired;
-    import org.springframework.context.annotation.Bean;
-    import org.springframework.context.annotation.Configuration;
-    import org.springframework.http.HttpMethod;
-    import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-    import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-    import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-    import org.springframework.security.config.http.SessionCreationPolicy;
-    import org.springframework.security.core.userdetails.UserDetailsService;
-    import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-    import org.springframework.security.crypto.password.PasswordEncoder;
-    import org.springframework.security.web.SecurityFilterChain;
-    import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-
-    @Configuration
-    @EnableWebSecurity
-    public class SecurityConfig {
-
-        private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-
-        @Autowired
-        public SecurityConfig(RestAuthenticationEntryPoint restAuthenticationEntryPoint) {
-            this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
-        }
-
-        @Bean
-        public SecurityFilterChain configure(HttpSecurity http) throws Exception {
-            return http
-                    .csrf(AbstractHttpConfigurer::disable)
-                    .headers(headers -> headers.frameOptions().disable())
-                    .authorizeHttpRequests(auth -> {
-                        auth.requestMatchers(
-                                AntPathRequestMatcher.antMatcher("/h2-console/**"),
-                                AntPathRequestMatcher.antMatcher(HttpMethod.POST,"/api/auth/signup")
-                        ).permitAll();
-                        auth.anyRequest().authenticated();
-                    })
-                    .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and()
-                    .httpBasic()
-                    .and()
-                    .build();
-        }
-
-        @Bean
-        public PasswordEncoder getPasswordEncoder() {
-            return new BCryptPasswordEncoder();
-        }
-
-    }
-  learner_created: false
-- name: src/account/presentationlayer/RestAuthenticationEntryPoint.java
-  visible: true
-  text: |
-    package account.presentationlayer;
-
-    import jakarta.servlet.ServletException;
-    import jakarta.servlet.http.HttpServletRequest;
-    import jakarta.servlet.http.HttpServletResponse;
-    import org.springframework.security.core.AuthenticationException;
-    import org.springframework.security.web.AuthenticationEntryPoint;
-    import org.springframework.stereotype.Component;
-
-    import java.io.IOException;
-
-    @Component
-    public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
-
-        @Override
-        public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
-        }
-    }
-  learner_created: false
 - name: src/account/persistencelayer/UserRepository.java
   visible: true
   text: |
@@ -318,118 +237,6 @@ files:
 
         User findByEmail(String email);
         boolean existsByEmail(String email);
-    }
-  learner_created: false
-- name: src/account/presentationlayer/MyUserDetailsService.java
-  visible: true
-  text: |
-    package account.presentationlayer;
-
-    import account.businesslayer.user.User;
-    import account.persistencelayer.UserRepository;
-    import org.springframework.beans.factory.annotation.Autowired;
-    import org.springframework.security.core.userdetails.UserDetails;
-    import org.springframework.security.core.userdetails.UserDetailsService;
-    import org.springframework.security.core.userdetails.UsernameNotFoundException;
-    import org.springframework.stereotype.Service;
-
-    @Service
-    public class MyUserDetailsService implements UserDetailsService {
-        @Autowired
-        private final UserRepository userRepository;
-
-
-        public MyUserDetailsService(UserRepository userRepository) {
-            this.userRepository = userRepository;
-
-        }
-
-        @Override
-        public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-            User user = userRepository.findByEmail(email);
-            if (user == null) {
-                throw new UsernameNotFoundException("User with email " + email + " doesn't exists.");
-            }
-            return new MyUserDetails(user);
-        }
-    }
-  learner_created: false
-- name: src/account/presentationlayer/MyUserDetails.java
-  visible: true
-  text: |
-    package account.presentationlayer;
-
-    import account.businesslayer.user.User;
-    import org.springframework.security.core.GrantedAuthority;
-    import org.springframework.security.core.authority.SimpleGrantedAuthority;
-    import org.springframework.security.core.userdetails.UserDetails;
-
-    import java.util.Collection;
-    import java.util.List;
-
-    public class MyUserDetails implements UserDetails {
-        private final String username;
-        private final String password;
-        private final List<GrantedAuthority> rolesAndAuthorities;
-
-        public MyUserDetails(User user) {
-            this.username = user.getEmail();
-            this.password = user.getPassword();
-            this.rolesAndAuthorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-        }
-
-        @Override
-        public Collection<? extends GrantedAuthority> getAuthorities() {
-            return rolesAndAuthorities;
-        }
-
-        @Override
-        public String getPassword() {
-            return password;
-        }
-
-        @Override
-        public String getUsername() {
-            return username;
-        }
-
-        @Override
-        public boolean isAccountNonExpired() {
-            return true;
-        }
-
-        @Override
-        public boolean isAccountNonLocked() {
-            return true;
-        }
-
-        @Override
-        public boolean isCredentialsNonExpired() {
-            return true;
-        }
-
-        @Override
-        public boolean isEnabled() {
-            return true;
-        }
-    }
-  learner_created: false
-- name: src/account/businesslayer/ErrorResponse.java
-  visible: true
-  text: |
-    package account.businesslayer;
-
-    public class ErrorResponse {
-        private final String message;
-
-
-        public ErrorResponse(String message) {
-            this.message = message;
-        }
-
-        public String getMessage() {
-            return message;
-        }
     }
   learner_created: false
 - name: test/AccountServiceTest.java
@@ -902,6 +709,175 @@ files:
       };
     }
   learner_created: false
+- name: src/account/businesslayer/exceptions/UserExistsException.java
+  visible: true
+  text: |
+    package account.businesslayer.exceptions;
+
+    import org.springframework.http.HttpStatus;
+    import org.springframework.web.bind.annotation.ResponseStatus;
+
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "User exist!")
+    public class UserExistsException extends RuntimeException {
+    }
+  learner_created: true
+- name: src/account/businesslayer/security/SecurityConfig.java
+  visible: true
+  text: |
+    package account.businesslayer.security;
+
+    import org.springframework.context.annotation.Bean;
+    import org.springframework.context.annotation.Configuration;
+    import org.springframework.http.HttpMethod;
+    import org.springframework.security.config.Customizer;
+    import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+    import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+    import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+    import org.springframework.security.config.http.SessionCreationPolicy;
+    import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+    import org.springframework.security.crypto.password.PasswordEncoder;
+    import org.springframework.security.web.SecurityFilterChain;
+    import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+    @Configuration
+    @EnableWebSecurity
+    public class SecurityConfig {
+
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+            return http
+                    .httpBasic(Customizer.withDefaults())
+                    .csrf(AbstractHttpConfigurer::disable)
+                    .headers(headers -> headers.frameOptions().disable())
+                    .authorizeHttpRequests(auth -> {
+                        auth.requestMatchers("/error").permitAll();
+                        auth.requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll();
+                        auth.requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll();
+                        auth.requestMatchers("/actuator/shutdown").permitAll();
+                        auth.anyRequest().authenticated();
+                    })
+                    .sessionManagement(session -> session
+                            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .build();
+        }
+
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+            return new BCryptPasswordEncoder();
+        }
+    }
+  learner_created: true
+- name: src/account/businesslayer/security/UserAdapterService.java
+  visible: true
+  text: |
+    package account.businesslayer.security;
+
+    import account.businesslayer.user.User;
+    import account.persistencelayer.UserRepository;
+    import org.springframework.security.core.userdetails.UserDetails;
+    import org.springframework.security.core.userdetails.UserDetailsService;
+    import org.springframework.security.core.userdetails.UsernameNotFoundException;
+    import org.springframework.stereotype.Service;
+
+    import java.util.Locale;
+
+    @Service
+    public class UserAdapterService implements UserDetailsService {
+        private final UserRepository userRepository;
+
+        public UserAdapterService(UserRepository userRepository) {
+            this.userRepository = userRepository;
+        }
+
+
+        @Override
+        public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+            User user = userRepository.findByEmailIgnoreCase(email);
+            if (user == null) {
+                throw new UsernameNotFoundException("User doesn't exist");
+            }
+            return new UserAdapter(user);
+        }
+    }
+  learner_created: true
+- name: src/account/businesslayer/security/UserAdapter.java
+  visible: true
+  text: |
+    package account.businesslayer.security;
+
+    import account.businesslayer.user.User;
+    import org.springframework.security.core.GrantedAuthority;
+    import org.springframework.security.core.authority.SimpleGrantedAuthority;
+    import org.springframework.security.core.userdetails.UserDetails;
+
+    import java.util.Collection;
+    import java.util.List;
+    import java.util.Locale;
+
+    public class UserAdapter implements UserDetails {
+        private final User user;
+
+        public UserAdapter(User user) {
+            this.user = user;
+        }
+
+        @Override
+        public Collection<? extends GrantedAuthority> getAuthorities() {
+            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+
+        @Override
+        public String getPassword() {
+            return user.getPassword();
+        }
+
+        @Override
+        public String getUsername() {
+            return user.getEmail();
+        }
+
+        @Override
+        public boolean isAccountNonExpired() {
+            return true;
+        }
+
+        @Override
+        public boolean isAccountNonLocked() {
+            return true;
+        }
+
+        @Override
+        public boolean isCredentialsNonExpired() {
+            return true;
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return true;
+        }
+    }
+  learner_created: true
+- name: src/account/businesslayer/security/BreachedPasswords.java
+  visible: true
+  learner_created: true
+- name: src/account/businesslayer/exceptions/PasswordBreachedException.java
+  visible: true
+  learner_created: true
+- name: src/account/businesslayer/user/PasswordChanger.java
+  visible: true
+  learner_created: true
+- name: src/account/businesslayer/exceptions/SamePasswordException.java
+  visible: true
+  learner_created: true
+- name: src/account/businesslayer/exceptions/PasswordLengthException.java
+  visible: true
+  learner_created: true
+- name: src/account/businesslayer/user/PasswordChangerDTO.java
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/16603#comment
-status: Unchecked
-record: -1
+status: Solved
+feedback:
+  message: Congratulations!
+  time: "Tue, 22 Aug 2023 11:43:59 UTC"
+record: 3

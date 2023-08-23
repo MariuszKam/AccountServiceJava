@@ -3,17 +3,17 @@ hyperskill_project:
   ide_files: https://cogniterra.org/media/attachments/lesson/26066/additional_files.json
   is_template_based: false
   use_ide: true
-update_date: "Thu, 17 Aug 2023 15:36:11 UTC"
+update_date: "Wed, 23 Aug 2023 15:26:47 UTC"
 stages:
 - id: 1086
   step: 16601
   is_completed: true
 - id: 1087
   step: 16602
-  is_completed: false
+  is_completed: true
 - id: 1088
   step: 16603
-  is_completed: false
+  is_completed: true
 - id: 1089
   step: 16604
   is_completed: false
@@ -102,12 +102,6 @@ topics:
     theory_id: 16299
   - title: CRUD repositories
     theory_id: 18031
-  - title: Getting data from REST
-    theory_id: 13287
-  - title: Posting and deleting data via REST
-    theory_id: 13292
-  - title: Handling requests with bodies
-    theory_id: 13334
   - title: Application layers
     theory_id: 13971
   - title: Data Transfer Object in Spring
@@ -280,6 +274,12 @@ topics:
     theory_id: 13775
   - title: Jackson
     theory_id: 21027
+  - title: Getting data from REST
+    theory_id: 13287
+  - title: Posting and deleting data via REST
+    theory_id: 13292
+  - title: Handling requests with bodies
+    theory_id: 13334
   - title: Authentication and Authorization
     theory_id: 14219
   - title: Introduction to generic programming
@@ -403,8 +403,6 @@ topics:
   3:
   - title: Using Spring MVC
     theory_id: 28136
-  - title: POST vs. PUT requests
-    theory_id: 27497
   - title: Transaction management
     theory_id: 28141
   - title: Connecting to a database with JDBC
@@ -439,6 +437,8 @@ topics:
     theory_id: 11014
   - title: JDBC Transactions
     theory_id: 11346
+  - title: POST vs. PUT requests
+    theory_id: 27497
   - title: Introduction to transactions
     theory_id: 12144
   - title: Understanding Transactions
