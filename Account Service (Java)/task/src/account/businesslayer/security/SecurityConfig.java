@@ -28,6 +28,7 @@ public class SecurityConfig {
                     auth.requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll();
                     auth.requestMatchers("/actuator/shutdown").permitAll();
+                    auth.requestMatchers("/api/acct/payments").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> session

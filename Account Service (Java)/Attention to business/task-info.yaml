@@ -127,55 +127,6 @@ files:
 
     }
   learner_created: false
-- name: src/account/presentationlayer/Controller.java
-  visible: true
-  text: |
-    package account.presentationlayer;
-
-
-    import account.businesslayer.user.User;
-    import account.businesslayer.user.UserMapper;
-    import account.persistencelayer.UserRepository;
-    import org.springframework.http.HttpStatus;
-    import org.springframework.http.ResponseEntity;
-    import org.springframework.security.crypto.password.PasswordEncoder;
-    import org.springframework.web.bind.annotation.*;
-    import org.springframework.web.server.ResponseStatusException;
-
-
-    @RestController
-    public class Controller {
-
-        private final UserMapper userMapper;
-        private final UserRepository userRepository;
-        private final PasswordEncoder passwordEncoder;
-
-
-        public Controller(UserMapper userMapper,
-                          UserRepository userRepository,
-                          PasswordEncoder passwordEncoder) {
-            this.userMapper = userMapper;
-            this.userRepository = userRepository;
-            this.passwordEncoder = passwordEncoder;
-        }
-
-        @PostMapping("/api/auth/signup")
-        public ResponseEntity<Object> signup(@RequestBody User user) {
-            if (!userRepository.existsByEmail(user.getEmail()) && user.isCorrect()) {
-                user.setPassword(passwordEncoder.encode(user.getPassword()));
-                userRepository.save(user);
-                return new ResponseEntity<>(userMapper.toSignupDTO(user), HttpStatus.OK);
-            }
-            return new ResponseEntity<>(userMapper.toSignupDTO(user), HttpStatus.BAD_REQUEST);
-        }
-
-        @GetMapping("/api/empl/payment/")
-        public String payment() {
-            return "This is just a test";
-        }
-
-    }
-  learner_created: false
 - name: src/account/businesslayer/user/SignupDTO.java
   visible: true
   text: |
@@ -1028,39 +979,6 @@ files:
     public class PasswordLengthException extends RuntimeException{
     }
   learner_created: true
-- name: src/account/businesslayer/security/UserAdapterService.java
-  visible: true
-  text: |
-    package account.businesslayer.security;
-
-    import account.businesslayer.user.User;
-    import account.persistencelayer.UserRepository;
-    import org.springframework.security.core.userdetails.UserDetails;
-    import org.springframework.security.core.userdetails.UserDetailsService;
-    import org.springframework.security.core.userdetails.UsernameNotFoundException;
-    import org.springframework.stereotype.Service;
-
-    import java.util.Locale;
-
-    @Service
-    public class UserAdapterService implements UserDetailsService {
-        private final UserRepository userRepository;
-
-        public UserAdapterService(UserRepository userRepository) {
-            this.userRepository = userRepository;
-        }
-
-
-        @Override
-        public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-            User user = userRepository.findByEmailIgnoreCase(email);
-            if (user == null) {
-                throw new UsernameNotFoundException("User doesn't exist");
-            }
-            return new UserAdapter(user);
-        }
-    }
-  learner_created: true
 - name: src/account/businesslayer/exceptions/PasswordBreachedException.java
   visible: true
   text: |
@@ -1073,63 +991,6 @@ files:
     public class PasswordBreachedException extends RuntimeException{
     }
   learner_created: true
-- name: src/account/businesslayer/security/UserAdapter.java
-  visible: true
-  text: |
-    package account.businesslayer.security;
-
-    import account.businesslayer.user.User;
-    import org.springframework.security.core.GrantedAuthority;
-    import org.springframework.security.core.authority.SimpleGrantedAuthority;
-    import org.springframework.security.core.userdetails.UserDetails;
-
-    import java.util.Collection;
-    import java.util.List;
-    import java.util.Locale;
-
-    public class UserAdapter implements UserDetails {
-        private final User user;
-
-        public UserAdapter(User user) {
-            this.user = user;
-        }
-
-        @Override
-        public Collection<? extends GrantedAuthority> getAuthorities() {
-            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
-        }
-
-        @Override
-        public String getPassword() {
-            return user.getPassword();
-        }
-
-        @Override
-        public String getUsername() {
-            return user.getEmail();
-        }
-
-        @Override
-        public boolean isAccountNonExpired() {
-            return true;
-        }
-
-        @Override
-        public boolean isAccountNonLocked() {
-            return true;
-        }
-
-        @Override
-        public boolean isCredentialsNonExpired() {
-            return true;
-        }
-
-        @Override
-        public boolean isEnabled() {
-            return true;
-        }
-    }
-  learner_created: true
 - name: src/account/presentationlayer/Controllers/RegistrationController.java
   visible: true
   learner_created: true
@@ -1139,6 +1000,42 @@ files:
 - name: src/account/presentationlayer/Controllers/PaymentController.java
   visible: true
   learner_created: true
+- name: src/account/businesslayer/payment/Payment.java
+  visible: true
+  learner_created: true
+- name: src/account/businesslayer/payment/PaymentStatusDTO.java
+  visible: true
+  learner_created: true
+- name: src/account/businesslayer/user/UserService.java
+  visible: true
+  learner_created: true
+- name: src/account/persistencelayer/PaymentRepository.java
+  visible: true
+  learner_created: true
+- name: src/account/businesslayer/payment/PaymentService.java
+  visible: true
+  learner_created: true
+- name: src/account/businesslayer/payment/PaymentDTO.java
+  visible: true
+  learner_created: true
+- name: src/account/businesslayer/payment/PaymentConverter.java
+  visible: true
+  learner_created: true
+- name: src/account/businesslayer/exceptions/UserDoesNotExistsException.java
+  visible: true
+  learner_created: true
+- name: src/account/businesslayer/exceptions/PeriodExistsException.java
+  visible: true
+  learner_created: true
+- name: src/account/businesslayer/exceptions/NegativeSalaryException.java
+  visible: true
+  learner_created: true
+- name: src/account/businesslayer/exceptions/ErrorException.java
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/16604#comment
-status: Unchecked
+status: Solved
+feedback:
+  message: Congratulations!
+  time: "Thu, 31 Aug 2023 23:05:38 UTC"
 record: -1

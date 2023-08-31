@@ -49,7 +49,7 @@ public class RegistrationController {
 
     }
 
-    @PostMapping("api/auth/changepass")
+    @PostMapping("/api/auth/changepass")
     public ResponseEntity<Object> changepass(@Valid @RequestBody PasswordChanger passwordChanger,
                                              Principal principal) {
         passwordSecurity.verification(passwordChanger.getNewPassword());

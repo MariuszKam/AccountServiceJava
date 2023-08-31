@@ -1,19 +1,17 @@
-package account.businesslayer.security;
+package account.businesslayer.user;
 
-import account.businesslayer.user.User;
+
 import account.persistencelayer.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Locale;
-
 @Service
-public class UserAdapterService implements UserDetailsService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
-    public UserAdapterService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -24,6 +22,6 @@ public class UserAdapterService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User doesn't exist");
         }
-        return new UserAdapter(user);
+        return user;
     }
 }

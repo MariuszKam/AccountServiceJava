@@ -3,7 +3,7 @@ hyperskill_project:
   ide_files: https://cogniterra.org/media/attachments/lesson/26066/additional_files.json
   is_template_based: false
   use_ide: true
-update_date: "Wed, 23 Aug 2023 15:26:47 UTC"
+update_date: "Thu, 31 Aug 2023 22:35:11 UTC"
 stages:
 - id: 1086
   step: 16601
@@ -16,7 +16,7 @@ stages:
   is_completed: true
 - id: 1089
   step: 16604
-  is_completed: false
+  is_completed: true
 - id: 1090
   step: 16605
   is_completed: false
@@ -40,42 +40,42 @@ topics:
     theory_id: 16927
   - title: Units of information
     theory_id: 6865
-  - title: "Write, compile, and run"
-    theory_id: 3739
-  - title: "JVM, JRE, and JDK"
-    theory_id: 3499
   - title: Introduction to Operating systems
     theory_id: 9704
   - title: Command line overview
     theory_id: 8977
+  - title: "Write, compile, and run"
+    theory_id: 3739
   - title: Parameters and Options
     theory_id: 9746
+  - title: "JVM, JRE, and JDK"
+    theory_id: 3499
   - title: World Wide Web
     theory_id: 6633
   - title: HyperText Transfer Protocol
     theory_id: 6569
-  - title: Introduction to Spring Boot
-    theory_id: 7944
-  - title: Getting started with Spring Boot
-    theory_id: 6336
   - title: Pseudocode
     theory_id: 15090
   - title: Pseudocode basics
     theory_id: 19510
   - title: Complex constructions in pseudocode
     theory_id: 20922
-  - title: Immutability
-    theory_id: 7929
-  - title: The concept of patterns
-    theory_id: 3611
+  - title: Introduction to Spring Boot
+    theory_id: 7944
+  - title: Getting started with Spring Boot
+    theory_id: 6336
   - title: Fixed-size array
     theory_id: 20078
   - title: Dynamic array
     theory_id: 5357
+  - title: Immutability
+    theory_id: 7929
   - title: HTTP URL
     theory_id: 6740
   - title: Basic project structure
     theory_id: 6339
+  - title: Introduction to Spring Web MVC
+    theory_id: 13611
   - title: IoC Container
     theory_id: 16851
   - title: Spring beans
@@ -90,8 +90,6 @@ topics:
     theory_id: 19487
   - title: Bean lifecycle
     theory_id: 19550
-  - title: Introduction to Spring Web MVC
-    theory_id: 13611
   - title: HTTP messages
     theory_id: 6752
   - title: REST
@@ -120,10 +118,6 @@ topics:
     theory_id: 31611
   - title: Spring actuator
     theory_id: 27488
-  - title: Computer programming
-    theory_id: 8739
-  - title: Paradigms
-    theory_id: 15860
   - title: Introduction to Java
     theory_id: 3500
   - title: Basic literals
@@ -184,14 +178,14 @@ topics:
     theory_id: 3511
   - title: Arrays as parameters
     theory_id: 3594
-  - title: Iterating over arrays
-    theory_id: 3602
   - title: Characters
     theory_id: 3514
   - title: String
     theory_id: 3523
   - title: Final variables
     theory_id: 7427
+  - title: Iterating over arrays
+    theory_id: 3602
   - title: Errors in programs
     theory_id: 3536
   - title: What is an exception
@@ -202,14 +196,14 @@ topics:
     theory_id: 3614
   - title: Package
     theory_id: 3621
+  - title: Java Archive
+    theory_id: 4311
   - title: Hierarchy of exceptions
     theory_id: 3570
   - title: Exception handling
     theory_id: 3552
   - title: Build tools
     theory_id: 4284
-  - title: Java Archive
-    theory_id: 4311
   - title: Gradle basics
     theory_id: 5075
   - title: Basic project with Gradle
@@ -218,14 +212,14 @@ topics:
     theory_id: 7917
   - title: Dependency management
     theory_id: 5076
-  - title: External resources
-    theory_id: 6216
   - title: Web development
     theory_id: 13931
   - title: Libraries
     theory_id: 8504
   - title: Frameworks
     theory_id: 6701
+  - title: External resources
+    theory_id: 6216
   - title: What is a bug
     theory_id: 5504
   - title: Functional testing
@@ -236,26 +230,28 @@ topics:
     theory_id: 20580
   - title: Introduction to software architecture
     theory_id: 15368
+  - title: The concept of patterns
+    theory_id: 3611
   - title: HTML basics
     theory_id: 6434
   - title: Tags and Attributes
     theory_id: 7536
   - title: HTML page structure
     theory_id: 6491
-  - title: Interfaces
-    theory_id: 9640
   - title: Design principles
     theory_id: 8956
-  - title: Coupling and cohesion
-    theory_id: 21478
   - title: YAML
     theory_id: 12722
+  - title: Coupling and cohesion
+    theory_id: 21478
   - title: Introduction to databases
     theory_id: 8497
   - title: "Synchronous, asynchronous, parallel"
     theory_id: 9332
   - title: Processes and threads
     theory_id: 9420
+  - title: Interfaces
+    theory_id: 9640
   - title: JSON
     theory_id: 6854
   - title: XML
@@ -280,6 +276,8 @@ topics:
     theory_id: 13292
   - title: Handling requests with bodies
     theory_id: 13334
+  - title: Customizing REST responses
+    theory_id: 33247
   - title: Authentication and Authorization
     theory_id: 14219
   - title: Introduction to generic programming
@@ -320,10 +318,10 @@ topics:
     theory_id: 17081
   - title: Defining classes
     theory_id: 3618
-  - title: Constructor
-    theory_id: 3535
   - title: Instance methods
     theory_id: 3495
+  - title: Constructor
+    theory_id: 3535
   - title: Access modifiers
     theory_id: 3589
   - title: Getters and setters
@@ -363,12 +361,16 @@ topics:
     theory_id: 8780
   - title: Advanced exception handling in Spring Boot
     theory_id: 19855
+  - title: Transaction management
+    theory_id: 28141
+  - title: Property expressions
+    theory_id: 28236
+  - title: HTTP Basic Auth
+    theory_id: 7778
   - title: Intro to H2 database
     theory_id: 27725
   - title: Relational databases with Spring Data
     theory_id: 18086
-  - title: HTTP Basic Auth
-    theory_id: 7778
   - title: Custom User Store
     theory_id: 32430
   - title: Getting authenticated user details
@@ -377,36 +379,6 @@ topics:
     theory_id: 13785
   - title: What is SQL
     theory_id: 7054
-  - title: Object-Relational Mapping (ORM)
-    theory_id: 8312
-  - title: Intro to MySQL
-    theory_id: 16662
-  - title: Introduction to JPA
-    theory_id: 17125
-  - title: Introduction to PostgreSQL
-    theory_id: 17974
-  2:
-  - title: Bean validation
-    theory_id: 9355
-  - title: Regexps basics
-    theory_id: 7580
-  - title: Regexps in Java
-    theory_id: 3670
-  - title: "Sets, ranges, alternations"
-    theory_id: 3674
-  - title: Quantifiers
-    theory_id: 3687
-  - title: Shorthands
-    theory_id: 3680
-  - title: Regexes in programs
-    theory_id: 3696
-  3:
-  - title: Using Spring MVC
-    theory_id: 28136
-  - title: Transaction management
-    theory_id: 28141
-  - title: Connecting to a database with JDBC
-    theory_id: 9519
   - title: Basic data types
     theory_id: 7123
   - title: Literals
@@ -425,10 +397,44 @@ topics:
     theory_id: 9059
   - title: Basic DELETE statement
     theory_id: 9075
+  - title: Object-Relational Mapping (ORM)
+    theory_id: 8312
+  - title: Intro to MySQL
+    theory_id: 16662
   - title: The NULL value
     theory_id: 7907
   - title: Special WHERE operators
     theory_id: 10521
+  - title: Introduction to JPA
+    theory_id: 17125
+  - title: Introduction to transactions
+    theory_id: 12144
+  - title: Understanding Transactions
+    theory_id: 12357
+  - title: Introduction to PostgreSQL
+    theory_id: 17974
+  - title: Entities
+    theory_id: 18135
+  2:
+  - title: Bean validation
+    theory_id: 9355
+  - title: Regexps basics
+    theory_id: 7580
+  - title: Regexps in Java
+    theory_id: 3670
+  - title: "Sets, ranges, alternations"
+    theory_id: 3674
+  - title: Quantifiers
+    theory_id: 3687
+  - title: Shorthands
+    theory_id: 3680
+  - title: Regexes in programs
+    theory_id: 3696
+  3:
+  - title: Using Spring MVC
+    theory_id: 28136
+  - title: Connecting to a database with JDBC
+    theory_id: 9519
   - title: Basic UPDATE statement
     theory_id: 9067
   - title: JDBC Statements
@@ -439,10 +445,6 @@ topics:
     theory_id: 11346
   - title: POST vs. PUT requests
     theory_id: 27497
-  - title: Introduction to transactions
-    theory_id: 12144
-  - title: Understanding Transactions
-    theory_id: 12357
   - title: Generic methods
     theory_id: 3606
   - title: Alter table
@@ -452,8 +454,6 @@ topics:
   - title: Consistency constraints
     theory_id: 9587
   4:
-  - title: Entities
-    theory_id: 18135
   - title: JPA relationships
     theory_id: 17787
   - title: Cascade operations
