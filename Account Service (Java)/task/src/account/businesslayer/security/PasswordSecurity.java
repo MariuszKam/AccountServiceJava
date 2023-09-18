@@ -30,8 +30,9 @@ public class PasswordSecurity {
     }
 
     public void newPasswordVerification(String oldPassword, String newPassword) {
+        verification(newPassword);
         if (passwordEncoder.matches(newPassword, oldPassword)) {
-            throw new SamePasswordException();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The passwords must be different!");
         }
     }
 

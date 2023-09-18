@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 
-
 @RestController
 public class RegistrationController {
     private final UserService userService;
@@ -27,8 +26,8 @@ public class RegistrationController {
     }
 
     @PostMapping("/api/auth/changepass")
-    public ResponseEntity<Object> changepass(@Valid @RequestBody PasswordChanger passwordChanger,
-                                             @AuthenticationPrincipal User user) {
+    public ResponseEntity<Object> changePassword(@Valid @RequestBody PasswordChanger passwordChanger,
+                                                 @AuthenticationPrincipal User user) {
         userService.changeUserPassword(user, passwordChanger.newPassword());
         PasswordChangerDTO response = new PasswordChangerDTO(user.getEmail().toLowerCase());
         return new ResponseEntity<>(response, HttpStatus.OK);

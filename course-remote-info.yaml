@@ -3,7 +3,7 @@ hyperskill_project:
   ide_files: https://cogniterra.org/media/attachments/lesson/26066/additional_files.json
   is_template_based: false
   use_ide: true
-update_date: "Mon, 18 Sep 2023 13:19:39 UTC"
+update_date: "Mon, 18 Sep 2023 18:19:43 UTC"
 stages:
   - id: 1086
     step: 16601
@@ -48,6 +48,8 @@ topics:
       theory_id: 8977
     - title: Parameters and Options
       theory_id: 9746
+    - title: World Wide Web
+      theory_id: 6633
     - title: HyperText Transfer Protocol
       theory_id: 6569
     - title: Pseudocode
@@ -66,16 +68,16 @@ topics:
       theory_id: 5357
     - title: Immutability
       theory_id: 7929
+    - title: HTTP URL
+      theory_id: 6740
     - title: Basic project structure
       theory_id: 6339
+    - title: Introduction to Spring Web MVC
+      theory_id: 13611
     - title: IoC Container
       theory_id: 16851
     - title: Spring beans
       theory_id: 14641
-    - title: HTTP URL
-      theory_id: 6740
-    - title: Introduction to Spring Web MVC
-      theory_id: 13611
     - title: Spring components
       theory_id: 14652
     - title: '@Bean vs @Component'
@@ -90,8 +92,6 @@ topics:
       theory_id: 6752
     - title: REST
       theory_id: 7834
-    - title: World Wide Web
-      theory_id: 6633
     - title: Postman
       theory_id: 8512
     - title: Introduction to Spring Data
@@ -230,26 +230,28 @@ topics:
       theory_id: 15368
     - title: The concept of patterns
       theory_id: 3611
-    - title: Design principles
-      theory_id: 8956
-    - title: YAML
-      theory_id: 12722
-    - title: Coupling and cohesion
-      theory_id: 21478
     - title: HTML basics
       theory_id: 6434
     - title: Tags and Attributes
       theory_id: 7536
     - title: HTML page structure
       theory_id: 6491
+    - title: Design principles
+      theory_id: 8956
+    - title: YAML
+      theory_id: 12722
+    - title: Coupling and cohesion
+      theory_id: 21478
+    - title: Introduction to databases
+      theory_id: 8497
     - title: "Synchronous, asynchronous, parallel"
       theory_id: 9332
     - title: Processes and threads
       theory_id: 9420
     - title: Interfaces
       theory_id: 9640
-    - title: Introduction to databases
-      theory_id: 8497
+    - title: JSON
+      theory_id: 6854
     - title: Data and object mapping
       theory_id: 8262
     - title: "Hashing: overview"
@@ -262,8 +264,6 @@ topics:
       theory_id: 30143
     - title: Hash table
       theory_id: 13054
-    - title: JSON
-      theory_id: 6854
     - title: Jackson
       theory_id: 21027
     - title: Getting data from REST
@@ -363,14 +363,14 @@ topics:
       theory_id: 28236
     - title: HTTP Basic Auth
       theory_id: 7778
-    - title: Custom User Store
-      theory_id: 32430
-    - title: Getting authenticated user details
-      theory_id: 16710
     - title: Intro to H2 database
       theory_id: 27725
     - title: Relational databases with Spring Data
       theory_id: 18086
+    - title: Custom User Store
+      theory_id: 32430
+    - title: Getting authenticated user details
+      theory_id: 16710
     - title: Relational Data Model
       theory_id: 13785
     - title: What is SQL
@@ -381,8 +381,6 @@ topics:
       theory_id: 7400
     - title: Arithmetic expressions
       theory_id: 7409
-    - title: Object-Relational Mapping (ORM)
-      theory_id: 8312
     - title: Basic CREATE statement
       theory_id: 9084
     - title: Basic SELECT statement
@@ -395,12 +393,14 @@ topics:
       theory_id: 9059
     - title: Basic DELETE statement
       theory_id: 9075
+    - title: Object-Relational Mapping (ORM)
+      theory_id: 8312
+    - title: Intro to MySQL
+      theory_id: 16662
     - title: The NULL value
       theory_id: 7907
     - title: Special WHERE operators
       theory_id: 10521
-    - title: Intro to MySQL
-      theory_id: 16662
     - title: Introduction to JPA
       theory_id: 17125
     - title: Introduction to transactions

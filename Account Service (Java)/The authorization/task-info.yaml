@@ -1079,30 +1079,6 @@ files:
           }
       }
     learner_created: true
-  - name: src/account/businesslayer/exceptions/UserExistsException.java
-    visible: true
-    text: |
-      package account.businesslayer.exceptions;
-      
-      import org.springframework.http.HttpStatus;
-      import org.springframework.web.bind.annotation.ResponseStatus;
-      
-      @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "User exist!")
-      public class UserExistsException extends RuntimeException {
-      }
-    learner_created: true
-  - name: src/account/businesslayer/exceptions/PeriodExistsException.java
-    visible: true
-    text: |
-      package account.businesslayer.exceptions;
-      
-      import org.springframework.http.HttpStatus;
-      import org.springframework.web.bind.annotation.ResponseStatus;
-      
-      @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Period already exists for this employee")
-      public class PeriodExistsException extends RuntimeException{
-      }
-    learner_created: true
   - name: src/account/businesslayer/security/SecurityConfig.java
     visible: true
     text: |
@@ -1243,33 +1219,6 @@ files:
           }
       }
     learner_created: true
-  - name: src/account/businesslayer/exceptions/ErrorException.java
-    visible: true
-    text: |
-      package account.businesslayer.exceptions;
-      
-      import org.springframework.http.HttpStatus;
-      import org.springframework.web.bind.annotation.ResponseStatus;
-      
-      @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-      public class ErrorException extends RuntimeException{
-          public ErrorException(String message) {
-              super(message);
-          }
-      }
-    learner_created: true
-  - name: src/account/businesslayer/exceptions/UserDoesNotExistsException.java
-    visible: true
-    text: |
-      package account.businesslayer.exceptions;
-      
-      import org.springframework.http.HttpStatus;
-      import org.springframework.web.bind.annotation.ResponseStatus;
-      
-      @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Employee does not exist")
-      public class UserDoesNotExistsException extends RuntimeException {
-      }
-    learner_created: true
   - name: src/account/businesslayer/payment/PaymentConverter.java
     visible: true
     text: "package account.businesslayer.payment;\n\nimport account.businesslayer.user.User;\n\
@@ -1324,30 +1273,6 @@ files:
           private long salary;
       }
     learner_created: true
-  - name: src/account/businesslayer/exceptions/PasswordLengthException.java
-    visible: true
-    text: |
-      package account.businesslayer.exceptions;
-      
-      import org.springframework.http.HttpStatus;
-      import org.springframework.web.bind.annotation.ResponseStatus;
-      
-      @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Password length must be 12 chars minimum!")
-      public class PasswordLengthException extends RuntimeException{
-      }
-    learner_created: true
-  - name: src/account/businesslayer/exceptions/PasswordBreachedException.java
-    visible: true
-    text: |
-      package account.businesslayer.exceptions;
-      
-      import org.springframework.http.HttpStatus;
-      import org.springframework.web.bind.annotation.ResponseStatus;
-      
-      @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "The password is in the hacker's database!")
-      public class PasswordBreachedException extends RuntimeException{
-      }
-    learner_created: true
   - name: src/account/persistencelayer/PaymentRepository.java
     visible: true
     text: |
@@ -1386,19 +1311,6 @@ files:
           private String lastname;
           private String period;
           private String salary;
-      }
-    learner_created: true
-  - name: src/account/businesslayer/exceptions/SamePasswordException.java
-    visible: true
-    text: |
-      package account.businesslayer.exceptions;
-      
-      import org.springframework.http.HttpStatus;
-      import org.springframework.web.bind.annotation.ResponseStatus;
-      
-      @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "The passwords must be different!")
-      public class SamePasswordException extends RuntimeException{
-      
       }
     learner_created: true
   - name: src/account/businesslayer/user/PasswordChanger.java
@@ -1576,18 +1488,6 @@ files:
           private final String status;
       }
     learner_created: true
-  - name: src/account/businesslayer/exceptions/NegativeSalaryException.java
-    visible: true
-    text: |
-      package account.businesslayer.exceptions;
-      
-      import org.springframework.http.HttpStatus;
-      import org.springframework.web.bind.annotation.ResponseStatus;
-      
-      @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Salary is negative")
-      public class NegativeSalaryException extends RuntimeException{
-      }
-    learner_created: true
   - name: src/account/businesslayer/user/UserService.java
     visible: true
     text: |
@@ -1618,21 +1518,6 @@ files:
               return user;
           }
       }
-    learner_created: true
-  - name: src/account/businesslayer/validations/interfaces/PasswordLength.java
-    visible: true
-    learner_created: true
-  - name: src/account/businesslayer/validations/classes/PasswordLengthValidator.java
-    visible: true
-    learner_created: true
-  - name: src/account/businesslayer/validations/interfaces/NotBreachedPassword.java
-    visible: true
-    learner_created: true
-  - name: src/account/businesslayer/validations/classes/BreachedPasswordValidator.java
-    visible: true
-    learner_created: true
-  - name: src/account/presentationlayer/Controllers/ValidationExceptionHandler.java
-    visible: true
     learner_created: true
 feedback_link: https://hyperskill.org/learn/step/16605#comment
 status: Unchecked

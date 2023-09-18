@@ -9,9 +9,11 @@ import java.util.List;
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
-   List<Payment> findAllByEmployeeIgnoreCaseOrderByPeriodDesc(String employee);
-   Payment findByEmployeeIgnoreCaseAndPeriod(String employee, String period);
-   boolean existsByEmployeeAndPeriod(String employee, String period);
+    List<Payment> findAllByEmployeeIgnoreCaseOrderByPeriodDesc(String employee);
+
+    Payment findByEmployeeIgnoreCaseAndPeriod(String employee, String period);
+
+    boolean existsByEmployeeAndPeriod(String employee, String period);
 
 
 }
