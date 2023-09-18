@@ -2,13 +2,10 @@ package account.presentationlayer.Controllers;
 
 import account.businesslayer.exceptions.ErrorException;
 import account.businesslayer.payment.*;
-import account.businesslayer.user.User;
-import account.businesslayer.user.UserMapper;
 import account.persistencelayer.PaymentRepository;
 import account.persistencelayer.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -49,10 +46,10 @@ public class PaymentController {
             if (payment == null) {
                 throw new ErrorException("Error!");
             }
-            PaymentDTO paymentView = paymentConverter.userViewConverter(payment);
+            PaymentDTO paymentView = paymentConverter.convertPayment(payment);
             return new ResponseEntity<>(paymentView, HttpStatus.OK);
         }
-        List<Payment> payroll = paymentRepository.findAllByEmployeeIgnoreCase(principal.getName());
+        List<Payment> payroll = paymentRepository.findAllByEmployeeIgnoreCaseOrderByPeriodDesc(principal.getName());
         List<PaymentDTO> payrollView = paymentConverter.convertAll(payroll);
         return new ResponseEntity<>(payrollView, HttpStatus.OK);
     }

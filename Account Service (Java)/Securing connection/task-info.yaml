@@ -1,526 +1,526 @@
 type: edu
 files:
-- name: src/account/AccountServiceApplication.java
-  visible: true
-  text: |-
-    package account;
-
-    import org.modelmapper.ModelMapper;
-    import org.springframework.boot.SpringApplication;
-    import org.springframework.boot.autoconfigure.SpringBootApplication;
-    import org.springframework.context.annotation.Bean;
-
-    @SpringBootApplication
-    public class AccountServiceApplication {
-
-        public static void main(String[] args) {
-            SpringApplication.run(AccountServiceApplication.class, args);
-        }
-
-        @Bean
-        public ModelMapper modelMapper() {
-            return new ModelMapper();
-        }
-
-    }
-  learner_created: false
-- name: src/resources/application.properties
-  visible: true
-  text: |+
-    server.port=28852
-    management.endpoints.web.exposure.include=*
-    management.endpoint.shutdown.enabled=true
-    spring.jackson.serialization.INDENT_OUTPUT=true
-
-    spring.security.user.name=admin
-
-    #Database Config
-    server.error.include-message=always
-    spring.h2.console.enabled=true
-    spring.datasource.url=jdbc:h2:file:../service_db
-    spring.jpa.hibernate.ddl-auto = create
-
-
-  learner_created: false
-- name: build.gradle
-  visible: true
-  text: |
-    buildscript {
-        apply plugin: 'hyperskill'
-
-        repositories {
-            mavenCentral()
-        }
-
-        dependencies {
-            classpath "org.springframework.boot:spring-boot-gradle-plugin:$hs.spring.bootVersion"
-            classpath "io.spring.gradle:dependency-management-plugin:$hs.spring.dependencyManagementVersion"
-        }
-    }
-
-    apply plugin: 'java'
-    apply plugin: 'org.springframework.boot'
-    apply plugin: 'io.spring.dependency-management'
-
-    repositories {
-        mavenCentral()
-    }
-
-    sourceSets.main.resources.srcDirs = ["src/resources"]
-
-    dependencies {
-        implementation 'org.springframework.boot:spring-boot-starter'
-        implementation 'org.springframework.boot:spring-boot-starter-actuator'
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-        implementation 'org.springframework.boot:spring-boot-starter-security'
-        implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.1.2'
-        implementation 'com.h2database:h2'
-        implementation group: 'org.hibernate', name: 'hibernate-validator', version: '6.1.0.Final'
-        //Jackson
-        implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
-        //ModelMapper
-        implementation 'org.modelmapper:modelmapper:3.1.1'
-        //Lombok
-        compileOnly 'org.projectlombok:lombok:1.18.28'
-        annotationProcessor 'org.projectlombok:lombok:1.18.28'
-
-    }
-  learner_created: false
-- name: src/account/businesslayer/user/User.java
-  visible: true
-  text: |
-    package account.businesslayer.user;
-
-
-    import jakarta.persistence.*;
-    import lombok.*;
-
-
-    @Entity
-    @Table(name = "users")
-    @NoArgsConstructor(force = true)
-    @AllArgsConstructor
-    @Setter
-    @Getter
-    public class User {
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(unique = true, nullable = false)
-        private final long id;
-        private final String name;
-        private final String lastname;
-        private final String email;
-        private String password;
-
-
-        public boolean isEmailCorrect() {
-            assert email != null;
-            return  email.matches("^[a-zA-Z]+@acme.com$");
-        }
-        public boolean isCorrect() {
-            return isEmailCorrect() &&
-                    name != null && !name.isEmpty() &&
-                    lastname != null && !lastname.isEmpty() &&
-                    email != null && !email.isEmpty() &&
-                    password != null && !password.isEmpty();
-        }
-
-    }
-  learner_created: false
-- name: src/account/presentationlayer/Controller.java
-  visible: true
-  text: |
-    package account.presentationlayer;
-
-
-    import account.businesslayer.user.User;
-    import account.businesslayer.user.UserMapper;
-    import account.persistencelayer.UserRepository;
-    import org.springframework.http.HttpStatus;
-    import org.springframework.http.ResponseEntity;
-    import org.springframework.security.crypto.password.PasswordEncoder;
-    import org.springframework.web.bind.annotation.*;
-    import org.springframework.web.server.ResponseStatusException;
-
-
-    @RestController
-    public class Controller {
-
-        private final UserMapper userMapper;
-        private final UserRepository userRepository;
-        private final PasswordEncoder passwordEncoder;
-
-
-        public Controller(UserMapper userMapper,
-                          UserRepository userRepository,
-                          PasswordEncoder passwordEncoder) {
-            this.userMapper = userMapper;
-            this.userRepository = userRepository;
-            this.passwordEncoder = passwordEncoder;
-        }
-
-        @PostMapping("/api/auth/signup")
-        public ResponseEntity<Object> signup(@RequestBody User user) {
-            if (!userRepository.existsByEmail(user.getEmail()) && user.isCorrect()) {
-                user.setPassword(passwordEncoder.encode(user.getPassword()));
-                userRepository.save(user);
-                return new ResponseEntity<>(userMapper.toSignupDTO(user), HttpStatus.OK);
-            }
-            return new ResponseEntity<>(userMapper.toSignupDTO(user), HttpStatus.BAD_REQUEST);
-        }
-
-        @GetMapping("/api/empl/payment/")
-        public String payment() {
-            return "This is just a test";
-        }
-
-    }
-  learner_created: false
-- name: src/account/businesslayer/user/SignupDTO.java
-  visible: true
-  text: |
-    package account.businesslayer.user;
-
-    import lombok.*;
-
-
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Getter
-    @Setter
-    public class SignupDTO {
-        private Long id;
-        private String name;
-        private String lastname;
-        private String email;
-    }
-  learner_created: false
-- name: src/account/businesslayer/user/UserMapper.java
-  visible: true
-  text: |
-    package account.businesslayer.user;
-
-    import org.modelmapper.ModelMapper;
-    import org.springframework.beans.factory.annotation.Autowired;
-    import org.springframework.stereotype.Component;
-
-    import java.util.Objects;
-
-    @Component
-    public class UserMapper {
-        @Autowired
-        private ModelMapper modelMapper;
-
-        public SignupDTO toSignupDTO(User user) {
-            return Objects.isNull(user) ? null : modelMapper.map(user, SignupDTO.class);
-        }
-
-
-        public User toUser(SignupDTO signupDTO) {
-            return Objects.isNull(signupDTO) ? null : modelMapper.map(signupDTO, User.class);
-        }
-
-    }
-  learner_created: false
-- name: src/account/presentationlayer/SecurityConfig.java
-  visible: true
-  text: |
-    package account.presentationlayer;
-
-    import org.springframework.beans.factory.annotation.Autowired;
-    import org.springframework.context.annotation.Bean;
-    import org.springframework.context.annotation.Configuration;
-    import org.springframework.http.HttpMethod;
-    import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-    import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-    import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-    import org.springframework.security.config.http.SessionCreationPolicy;
-    import org.springframework.security.core.userdetails.UserDetailsService;
-    import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-    import org.springframework.security.crypto.password.PasswordEncoder;
-    import org.springframework.security.web.SecurityFilterChain;
-    import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-
-    @Configuration
-    @EnableWebSecurity
-    public class SecurityConfig {
-
-        private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-
-        @Autowired
-        public SecurityConfig(RestAuthenticationEntryPoint restAuthenticationEntryPoint) {
-            this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
-        }
-
-        @Bean
-        public SecurityFilterChain configure(HttpSecurity http) throws Exception {
-            return http
-                    .csrf(AbstractHttpConfigurer::disable)
-                    .headers(headers -> headers.frameOptions().disable())
-                    .authorizeHttpRequests(auth -> {
-                        auth.requestMatchers(
-                                AntPathRequestMatcher.antMatcher("/h2-console/**"),
-                                AntPathRequestMatcher.antMatcher(HttpMethod.POST,"/api/auth/signup")
-                        ).permitAll();
-                        auth.anyRequest().authenticated();
-                    })
-                    .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and()
-                    .httpBasic()
-                    .and()
-                    .build();
-        }
-
-        @Bean
-        public PasswordEncoder getPasswordEncoder() {
-            return new BCryptPasswordEncoder();
-        }
-
-    }
-  learner_created: false
-- name: src/account/presentationlayer/RestAuthenticationEntryPoint.java
-  visible: true
-  text: |
-    package account.presentationlayer;
-
-    import jakarta.servlet.ServletException;
-    import jakarta.servlet.http.HttpServletRequest;
-    import jakarta.servlet.http.HttpServletResponse;
-    import org.springframework.security.core.AuthenticationException;
-    import org.springframework.security.web.AuthenticationEntryPoint;
-    import org.springframework.stereotype.Component;
-
-    import java.io.IOException;
-
-    @Component
-    public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
-
-        @Override
-        public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
-        }
-    }
-  learner_created: false
-- name: src/account/persistencelayer/UserRepository.java
-  visible: true
-  text: |
-    package account.persistencelayer;
-
-    import account.businesslayer.user.User;
-    import org.springframework.data.repository.CrudRepository;
-    import org.springframework.stereotype.Repository;
-
-    @Repository
-    public interface UserRepository extends CrudRepository<User, Long> {
-
-        User findByEmail(String email);
-        boolean existsByEmail(String email);
-    }
-  learner_created: false
-- name: src/account/presentationlayer/MyUserDetailsService.java
-  visible: true
-  text: |
-    package account.presentationlayer;
-
-    import account.businesslayer.user.User;
-    import account.persistencelayer.UserRepository;
-    import org.springframework.beans.factory.annotation.Autowired;
-    import org.springframework.security.core.userdetails.UserDetails;
-    import org.springframework.security.core.userdetails.UserDetailsService;
-    import org.springframework.security.core.userdetails.UsernameNotFoundException;
-    import org.springframework.stereotype.Service;
-
-    @Service
-    public class MyUserDetailsService implements UserDetailsService {
-        @Autowired
-        private final UserRepository userRepository;
-
-
-        public MyUserDetailsService(UserRepository userRepository) {
-            this.userRepository = userRepository;
-
-        }
-
-        @Override
-        public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-            User user = userRepository.findByEmail(email);
-            if (user == null) {
-                throw new UsernameNotFoundException("User with email " + email + " doesn't exists.");
-            }
-            return new MyUserDetails(user);
-        }
-    }
-  learner_created: false
-- name: src/account/presentationlayer/MyUserDetails.java
-  visible: true
-  text: |
-    package account.presentationlayer;
-
-    import account.businesslayer.user.User;
-    import org.springframework.security.core.GrantedAuthority;
-    import org.springframework.security.core.authority.SimpleGrantedAuthority;
-    import org.springframework.security.core.userdetails.UserDetails;
-
-    import java.util.Collection;
-    import java.util.List;
-
-    public class MyUserDetails implements UserDetails {
-        private final String username;
-        private final String password;
-        private final List<GrantedAuthority> rolesAndAuthorities;
-
-        public MyUserDetails(User user) {
-            this.username = user.getEmail();
-            this.password = user.getPassword();
-            this.rolesAndAuthorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-        }
-
-        @Override
-        public Collection<? extends GrantedAuthority> getAuthorities() {
-            return rolesAndAuthorities;
-        }
-
-        @Override
-        public String getPassword() {
-            return password;
-        }
-
-        @Override
-        public String getUsername() {
-            return username;
-        }
-
-        @Override
-        public boolean isAccountNonExpired() {
-            return true;
-        }
-
-        @Override
-        public boolean isAccountNonLocked() {
-            return true;
-        }
-
-        @Override
-        public boolean isCredentialsNonExpired() {
-            return true;
-        }
-
-        @Override
-        public boolean isEnabled() {
-            return true;
-        }
-    }
-  learner_created: false
-- name: src/account/businesslayer/ErrorResponse.java
-  visible: true
-  text: |
-    package account.businesslayer;
-
-    public class ErrorResponse {
-        private final String message;
-
-
-        public ErrorResponse(String message) {
-            this.message = message;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-    }
-  learner_created: false
-- name: test/AccountServiceTest.java
-  visible: false
-  text: |
-    import account.AccountServiceApplication;
-    import org.hyperskill.hstest.dynamic.DynamicTest;
-    import org.hyperskill.hstest.dynamic.input.DynamicTesting;
-    import org.hyperskill.hstest.exception.outcomes.WrongAnswer;
-    import org.hyperskill.hstest.mocks.web.request.HttpRequest;
-    import org.hyperskill.hstest.stage.SpringTest;
-    import org.hyperskill.hstest.testcase.CheckResult;
-
-    import javax.net.ssl.*;
-    import java.security.cert.X509Certificate;
-
-    public class AccountServiceTest extends SpringTest {
-      public AccountServiceTest() {
-        super(AccountServiceApplication.class, "../service_db.mv.db");
+  - name: src/account/AccountServiceApplication.java
+    visible: true
+    text: |-
+      package account;
+      
+      import org.modelmapper.ModelMapper;
+      import org.springframework.boot.SpringApplication;
+      import org.springframework.boot.autoconfigure.SpringBootApplication;
+      import org.springframework.context.annotation.Bean;
+      
+      @SpringBootApplication
+      public class AccountServiceApplication {
+      
+          public static void main(String[] args) {
+              SpringApplication.run(AccountServiceApplication.class, args);
+          }
+      
+          @Bean
+          public ModelMapper modelMapper() {
+              return new ModelMapper();
+          }
+      
       }
-
-      SSLSocket socket;
-      java.security.cert.X509Certificate[] chain;
-
-      // Warning!!! Only for testing reason, trust all certificates!
-      TrustManager[] trustAllCerts = new TrustManager[] {
-              new X509TrustManager() {
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                  return new java.security.cert.X509Certificate[0];
-                }
-                public void checkClientTrusted(
-                        java.security.cert.X509Certificate[] certs, String authType) {
-                }
-                public void checkServerTrusted(
-                        java.security.cert.X509Certificate[] certs, String authType) {
-                }
+    learner_created: false
+  - name: src/resources/application.properties
+    visible: true
+    text: |+
+      server.port=28852
+      management.endpoints.web.exposure.include=*
+      management.endpoint.shutdown.enabled=true
+      spring.jackson.serialization.INDENT_OUTPUT=true
+      
+      spring.security.user.name=admin
+      
+      #Database Config
+      server.error.include-message=always
+      spring.h2.console.enabled=true
+      spring.datasource.url=jdbc:h2:file:../service_db
+      spring.jpa.hibernate.ddl-auto = create
+    
+    
+    learner_created: false
+  - name: build.gradle
+    visible: true
+    text: |
+      buildscript {
+          apply plugin: 'hyperskill'
+      
+          repositories {
+              mavenCentral()
+          }
+      
+          dependencies {
+              classpath "org.springframework.boot:spring-boot-gradle-plugin:$hs.spring.bootVersion"
+              classpath "io.spring.gradle:dependency-management-plugin:$hs.spring.dependencyManagementVersion"
+          }
+      }
+      
+      apply plugin: 'java'
+      apply plugin: 'org.springframework.boot'
+      apply plugin: 'io.spring.dependency-management'
+      
+      repositories {
+          mavenCentral()
+      }
+      
+      sourceSets.main.resources.srcDirs = ["src/resources"]
+      
+      dependencies {
+          implementation 'org.springframework.boot:spring-boot-starter'
+          implementation 'org.springframework.boot:spring-boot-starter-actuator'
+          implementation 'org.springframework.boot:spring-boot-starter-web'
+          implementation 'org.springframework.boot:spring-boot-starter-security'
+          implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.1.2'
+          implementation 'com.h2database:h2'
+          implementation group: 'org.hibernate', name: 'hibernate-validator', version: '6.1.0.Final'
+          //Jackson
+          implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+          //ModelMapper
+          implementation 'org.modelmapper:modelmapper:3.1.1'
+          //Lombok
+          compileOnly 'org.projectlombok:lombok:1.18.28'
+          annotationProcessor 'org.projectlombok:lombok:1.18.28'
+      
+      }
+    learner_created: false
+  - name: src/account/businesslayer/user/User.java
+    visible: true
+    text: |
+      package account.businesslayer.user;
+      
+      
+      import jakarta.persistence.*;
+      import lombok.*;
+      
+      
+      @Entity
+      @Table(name = "users")
+      @NoArgsConstructor(force = true)
+      @AllArgsConstructor
+      @Setter
+      @Getter
+      public class User {
+          @Id
+          @GeneratedValue(strategy = GenerationType.IDENTITY)
+          @Column(unique = true, nullable = false)
+          private final long id;
+          private final String name;
+          private final String lastname;
+          private final String email;
+          private String password;
+      
+      
+          public boolean isEmailCorrect() {
+              assert email != null;
+              return  email.matches("^[a-zA-Z]+@acme.com$");
+          }
+          public boolean isCorrect() {
+              return isEmailCorrect() &&
+                      name != null && !name.isEmpty() &&
+                      lastname != null && !lastname.isEmpty() &&
+                      email != null && !email.isEmpty() &&
+                      password != null && !password.isEmpty();
+          }
+      
+      }
+    learner_created: false
+  - name: src/account/presentationlayer/Controller.java
+    visible: true
+    text: |
+      package account.presentationlayer;
+      
+      
+      import account.businesslayer.user.User;
+      import account.businesslayer.user.UserMapper;
+      import account.persistencelayer.UserRepository;
+      import org.springframework.http.HttpStatus;
+      import org.springframework.http.ResponseEntity;
+      import org.springframework.security.crypto.password.PasswordEncoder;
+      import org.springframework.web.bind.annotation.*;
+      import org.springframework.web.server.ResponseStatusException;
+      
+      
+      @RestController
+      public class Controller {
+      
+          private final UserMapper userMapper;
+          private final UserRepository userRepository;
+          private final PasswordEncoder passwordEncoder;
+      
+      
+          public Controller(UserMapper userMapper,
+                            UserRepository userRepository,
+                            PasswordEncoder passwordEncoder) {
+              this.userMapper = userMapper;
+              this.userRepository = userRepository;
+              this.passwordEncoder = passwordEncoder;
+          }
+      
+          @PostMapping("/api/auth/signup")
+          public ResponseEntity<Object> signup(@RequestBody User user) {
+              if (!userRepository.existsByEmail(user.getEmail()) && user.isCorrect()) {
+                  user.setPassword(passwordEncoder.encode(user.getPassword()));
+                  userRepository.save(user);
+                  return new ResponseEntity<>(userMapper.toSignupDTO(user), HttpStatus.OK);
               }
-      };
-
-      // Test SSL
-      public CheckResult checkCertificateName(String nameCN) {
-        try {
-          SSLContext sc = SSLContext.getInstance("SSL");
-          //ТАК нельзя!!! доверяем всем сертификатам, только для тестирования и разработки!!!
-          sc.init(null, trustAllCerts, new java.security.SecureRandom());
-          SSLSocketFactory factory = sc.getSocketFactory();
-          HttpRequest request = get("");
-          socket = (SSLSocket) factory.createSocket(request.getHost(), request.getPort());
-          getCertificates();
-          if (findCert(nameCN)) {
-            return CheckResult.correct();
-          } else {
-            throw new WrongAnswer("Not found certificate with CN - " + nameCN);
+              return new ResponseEntity<>(userMapper.toSignupDTO(user), HttpStatus.BAD_REQUEST);
           }
-        } catch (Exception e) {
-          e.printStackTrace();
-          System.out.println("Connection not found");
-          throw new WrongAnswer("Can't establish https connection!");
-        }
+      
+          @GetMapping("/api/empl/payment/")
+          public String payment() {
+              return "This is just a test";
+          }
+      
       }
-
-      // Get certificate chain
-      public void getCertificates() {
-        try {
-          chain = (X509Certificate[]) socket.getSession().getPeerCertificates();
-        } catch (SSLPeerUnverifiedException e) {
-          e.printStackTrace();
-          System.out.println(e.toString());
-        }
+    learner_created: false
+  - name: src/account/businesslayer/user/SignupDTO.java
+    visible: true
+    text: |
+      package account.businesslayer.user;
+      
+      import lombok.*;
+      
+      
+      @NoArgsConstructor
+      @AllArgsConstructor
+      @Getter
+      @Setter
+      public class SignupDTO {
+          private Long id;
+          private String name;
+          private String lastname;
+          private String email;
       }
-
-
-      // Searching certificate by Common Name
-      public boolean findCert(String subject) {
-        for (java.security.cert.X509Certificate c : chain) {
-          String subjectName = c.getSubjectDN().getName();
-          System.out.println(subjectName + " " + c.getSigAlgName());
-          if (subjectName.contains("CN=" + subject)) {
-            return true;
+    learner_created: false
+  - name: src/account/businesslayer/user/UserMapper.java
+    visible: true
+    text: |
+      package account.businesslayer.user;
+      
+      import org.modelmapper.ModelMapper;
+      import org.springframework.beans.factory.annotation.Autowired;
+      import org.springframework.stereotype.Component;
+      
+      import java.util.Objects;
+      
+      @Component
+      public class UserMapper {
+          @Autowired
+          private ModelMapper modelMapper;
+      
+          public SignupDTO toSignupDTO(User user) {
+              return Objects.isNull(user) ? null : modelMapper.map(user, SignupDTO.class);
+          }
+      
+      
+          public User toUser(SignupDTO signupDTO) {
+              return Objects.isNull(signupDTO) ? null : modelMapper.map(signupDTO, User.class);
+          }
+      
+      }
+    learner_created: false
+  - name: src/account/presentationlayer/SecurityConfig.java
+    visible: true
+    text: |
+      package account.presentationlayer;
+      
+      import org.springframework.beans.factory.annotation.Autowired;
+      import org.springframework.context.annotation.Bean;
+      import org.springframework.context.annotation.Configuration;
+      import org.springframework.http.HttpMethod;
+      import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+      import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+      import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+      import org.springframework.security.config.http.SessionCreationPolicy;
+      import org.springframework.security.core.userdetails.UserDetailsService;
+      import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+      import org.springframework.security.crypto.password.PasswordEncoder;
+      import org.springframework.security.web.SecurityFilterChain;
+      import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+      
+      
+      @Configuration
+      @EnableWebSecurity
+      public class SecurityConfig {
+      
+          private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+      
+          @Autowired
+          public SecurityConfig(RestAuthenticationEntryPoint restAuthenticationEntryPoint) {
+              this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
+          }
+      
+          @Bean
+          public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+              return http
+                      .csrf(AbstractHttpConfigurer::disable)
+                      .headers(headers -> headers.frameOptions().disable())
+                      .authorizeHttpRequests(auth -> {
+                          auth.requestMatchers(
+                                  AntPathRequestMatcher.antMatcher("/h2-console/**"),
+                                  AntPathRequestMatcher.antMatcher(HttpMethod.POST,"/api/auth/signup")
+                          ).permitAll();
+                          auth.anyRequest().authenticated();
+                      })
+                      .sessionManagement()
+                      .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                      .and()
+                      .httpBasic()
+                      .and()
+                      .build();
+          }
+      
+          @Bean
+          public PasswordEncoder getPasswordEncoder() {
+              return new BCryptPasswordEncoder();
+          }
+      
+      }
+    learner_created: false
+  - name: src/account/presentationlayer/RestAuthenticationEntryPoint.java
+    visible: true
+    text: |
+      package account.presentationlayer;
+      
+      import jakarta.servlet.ServletException;
+      import jakarta.servlet.http.HttpServletRequest;
+      import jakarta.servlet.http.HttpServletResponse;
+      import org.springframework.security.core.AuthenticationException;
+      import org.springframework.security.web.AuthenticationEntryPoint;
+      import org.springframework.stereotype.Component;
+      
+      import java.io.IOException;
+      
+      @Component
+      public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
+      
+          @Override
+          public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+              response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+          }
+      }
+    learner_created: false
+  - name: src/account/persistencelayer/UserRepository.java
+    visible: true
+    text: |
+      package account.persistencelayer;
+      
+      import account.businesslayer.user.User;
+      import org.springframework.data.repository.CrudRepository;
+      import org.springframework.stereotype.Repository;
+      
+      @Repository
+      public interface UserRepository extends CrudRepository<User, Long> {
+      
+          User findByEmail(String email);
+          boolean existsByEmail(String email);
+      }
+    learner_created: false
+  - name: src/account/presentationlayer/MyUserDetailsService.java
+    visible: true
+    text: |
+      package account.presentationlayer;
+      
+      import account.businesslayer.user.User;
+      import account.persistencelayer.UserRepository;
+      import org.springframework.beans.factory.annotation.Autowired;
+      import org.springframework.security.core.userdetails.UserDetails;
+      import org.springframework.security.core.userdetails.UserDetailsService;
+      import org.springframework.security.core.userdetails.UsernameNotFoundException;
+      import org.springframework.stereotype.Service;
+      
+      @Service
+      public class MyUserDetailsService implements UserDetailsService {
+          @Autowired
+          private final UserRepository userRepository;
+      
+      
+          public MyUserDetailsService(UserRepository userRepository) {
+              this.userRepository = userRepository;
+      
+          }
+      
+          @Override
+          public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+              User user = userRepository.findByEmail(email);
+              if (user == null) {
+                  throw new UsernameNotFoundException("User with email " + email + " doesn't exists.");
+              }
+              return new MyUserDetails(user);
+          }
+      }
+    learner_created: false
+  - name: src/account/presentationlayer/MyUserDetails.java
+    visible: true
+    text: |
+      package account.presentationlayer;
+      
+      import account.businesslayer.user.User;
+      import org.springframework.security.core.GrantedAuthority;
+      import org.springframework.security.core.authority.SimpleGrantedAuthority;
+      import org.springframework.security.core.userdetails.UserDetails;
+      
+      import java.util.Collection;
+      import java.util.List;
+      
+      public class MyUserDetails implements UserDetails {
+          private final String username;
+          private final String password;
+          private final List<GrantedAuthority> rolesAndAuthorities;
+      
+          public MyUserDetails(User user) {
+              this.username = user.getEmail();
+              this.password = user.getPassword();
+              this.rolesAndAuthorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+          }
+      
+          @Override
+          public Collection<? extends GrantedAuthority> getAuthorities() {
+              return rolesAndAuthorities;
+          }
+      
+          @Override
+          public String getPassword() {
+              return password;
+          }
+      
+          @Override
+          public String getUsername() {
+              return username;
+          }
+      
+          @Override
+          public boolean isAccountNonExpired() {
+              return true;
+          }
+      
+          @Override
+          public boolean isAccountNonLocked() {
+              return true;
+          }
+      
+          @Override
+          public boolean isCredentialsNonExpired() {
+              return true;
+          }
+      
+          @Override
+          public boolean isEnabled() {
+              return true;
+          }
+      }
+    learner_created: false
+  - name: src/account/businesslayer/ErrorResponse.java
+    visible: true
+    text: |
+      package account.businesslayer;
+      
+      public class ErrorResponse {
+          private final String message;
+      
+      
+          public ErrorResponse(String message) {
+              this.message = message;
+          }
+      
+          public String getMessage() {
+              return message;
+          }
+      }
+    learner_created: false
+  - name: test/AccountServiceTest.java
+    visible: false
+    text: |
+      import account.AccountServiceApplication;
+      import org.hyperskill.hstest.dynamic.DynamicTest;
+      import org.hyperskill.hstest.dynamic.input.DynamicTesting;
+      import org.hyperskill.hstest.exception.outcomes.WrongAnswer;
+      import org.hyperskill.hstest.mocks.web.request.HttpRequest;
+      import org.hyperskill.hstest.stage.SpringTest;
+      import org.hyperskill.hstest.testcase.CheckResult;
+      
+      import javax.net.ssl.*;
+      import java.security.cert.X509Certificate;
+      
+      public class AccountServiceTest extends SpringTest {
+        public AccountServiceTest() {
+          super(AccountServiceApplication.class, "../service_db.mv.db");
+        }
+      
+        SSLSocket socket;
+        java.security.cert.X509Certificate[] chain;
+      
+        // Warning!!! Only for testing reason, trust all certificates!
+        TrustManager[] trustAllCerts = new TrustManager[] {
+                new X509TrustManager() {
+                  public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    return new java.security.cert.X509Certificate[0];
+                  }
+                  public void checkClientTrusted(
+                          java.security.cert.X509Certificate[] certs, String authType) {
+                  }
+                  public void checkServerTrusted(
+                          java.security.cert.X509Certificate[] certs, String authType) {
+                  }
+                }
+        };
+      
+        // Test SSL
+        public CheckResult checkCertificateName(String nameCN) {
+          try {
+            SSLContext sc = SSLContext.getInstance("SSL");
+            //ТАК нельзя!!! доверяем всем сертификатам, только для тестирования и разработки!!!
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            SSLSocketFactory factory = sc.getSocketFactory();
+            HttpRequest request = get("");
+            socket = (SSLSocket) factory.createSocket(request.getHost(), request.getPort());
+            getCertificates();
+            if (findCert(nameCN)) {
+              return CheckResult.correct();
+            } else {
+              throw new WrongAnswer("Not found certificate with CN - " + nameCN);
+            }
+          } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Connection not found");
+            throw new WrongAnswer("Can't establish https connection!");
           }
         }
-        return false;
+      
+        // Get certificate chain
+        public void getCertificates() {
+          try {
+            chain = (X509Certificate[]) socket.getSession().getPeerCertificates();
+          } catch (SSLPeerUnverifiedException e) {
+            e.printStackTrace();
+            System.out.println(e.toString());
+          }
+        }
+      
+      
+        // Searching certificate by Common Name
+        public boolean findCert(String subject) {
+          for (java.security.cert.X509Certificate c : chain) {
+            String subjectName = c.getSubjectDN().getName();
+            System.out.println(subjectName + " " + c.getSigAlgName());
+            if (subjectName.contains("CN=" + subject)) {
+              return true;
+            }
+          }
+          return false;
+        }
+      
+        @DynamicTest
+        DynamicTesting[] dt = new DynamicTesting[]{
+      
+                // Check certificate name
+                () -> checkCertificateName("accountant_service"),
+        };
       }
-
-      @DynamicTest
-      DynamicTesting[] dt = new DynamicTesting[]{
-
-              // Check certificate name
-              () -> checkCertificateName("accountant_service"),
-      };
-    }
-  learner_created: false
+    learner_created: false
 feedback_link: https://hyperskill.org/learn/step/16607#comment
 status: Unchecked
 record: -1

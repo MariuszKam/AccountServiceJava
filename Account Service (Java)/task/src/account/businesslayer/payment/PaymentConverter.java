@@ -6,10 +6,9 @@ import org.springframework.stereotype.Component;
 
 import java.time.Month;
 import java.time.format.TextStyle;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Component
 public class PaymentConverter {
@@ -35,7 +34,7 @@ public class PaymentConverter {
         return month.getDisplayName(TextStyle.FULL, Locale.ENGLISH) + "-" + parts[1];
     }
 
-    public PaymentDTO userViewConverter (Payment payment) {
+    public PaymentDTO convertPayment (Payment payment) {
         User user = userRepository.findByEmailIgnoreCase(payment.getEmployee());
         String period = periodConverter(payment.getPeriod());
         String salary = salaryConverter(payment.getSalary());
@@ -44,12 +43,6 @@ public class PaymentConverter {
     }
     
     public List<PaymentDTO> convertAll (List<Payment> payroll) {
-        List<PaymentDTO> result = new ArrayList<>();
-        for (Payment payment:payroll
-             ) {
-            result.add(userViewConverter(payment));
-        }
-        Collections.reverse(result);
-        return result;
+        return payroll.stream().map(this::convertPayment).collect(Collectors.toList());
     }
 }
